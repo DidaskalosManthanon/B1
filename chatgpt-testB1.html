@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Level Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #f4f4f4;
+    }
+    .question-card {
+      background: #fff;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-weight: bold;
+    }
+    .answers label {
+      display: block;
+      margin: 0.5rem 0;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Your English – General Level (B1–B2)</h1>
+  <div id="quiz-container"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "1. I _____ to the gym twice a week.",
+        options: ["go", "goes", "am going", "going"],
+        answer: "go"
+      },
+      {
+        question: "2. She _____ a new phone last week.",
+        options: ["buys", "bought", "buy", "has bought"],
+        answer: "bought"
+      },
+      // Add more questions up to 20
+      {
+        question: "3. If it rains tomorrow, we _____ at home.",
+        options: ["stay", "will stay", "stayed", "would stay"],
+        answer: "will stay"
+      },
+      {
+        question: "4. I’m not interested _____ politics.",
+        options: ["on", "in", "by", "about"],
+        answer: "in"
+      },
+      {
+        question: "5. They _____ here for five years.",
+        options: ["lived", "have lived", "live", "are living"],
+        answer: "have lived"
+      },
+      {
+        question: "6. He’s the _____ person I’ve ever met!",
+        options: ["more rude", "rudest", "most rude", "ruder"],
+        answer: "rudest"
+      },
+      {
+        question: "7. Would you mind _____ the window?",
+        options: ["to open", "opening", "open", "opened"],
+        answer: "opening"
+      },
+      {
+        question: "8. She said she _____ call me later.",
+        options: ["will", "would", "can", "should"],
+        answer: "would"
+      },
+      {
+        question: "9. There isn’t _____ milk in the fridge.",
+        options: ["some", "a", "any", "the"],
+        answer: "any"
+      },
+      {
+        question: "10. Let’s go out, _____?",
+        options: ["shall we", "don’t we", "won’t we", "aren’t we"],
+        answer: "shall we"
+      },
+      // Add 10 more questions here as needed
+    ];
+
+    const container = document.getElementById('quiz-container');
+
+    let currentQuestion = 0;
+
+    function loadQuestion(index) {
+      const q = questions[index];
+      container.innerHTML = `
+        <div class="question-card">
+          <div class="question">${q.question}</div>
+          <div class="answers">
+            ${q.options.map((opt, i) => `
+              <label>
+                <input type="radio" name="answer" value="${opt}" /> ${opt}
+              </label>
+            `).join('')}
+          </div>
+          <button onclick="checkAnswer(${index})">Submit</button>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      `;
+    }
+
+    function checkAnswer(index) {
+      const selected = document.querySelector('input[name="answer"]:checked');
+      const feedback = document.getElementById('feedback');
+      if (!selected) {
+        feedback.textContent = "Please choose an answer.";
+        feedback.style.color = "#dc3545";
+        return;
+      }
+      if (selected.value === questions[index].answer) {
+        feedback.textContent = "Correct!";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = `Wrong. Correct answer: ${questions[index].answer}`;
+        feedback.style.color = "red";
+      }
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          loadQuestion(currentQuestion);
+        } else {
+          container.innerHTML = `<h2>Test completed!</h2><p>You have reached the end of the test.</p>`;
+        }
+      }, 2000);
+    }
+
+    // Initialize
+    loadQuestion(currentQuestion);
+  </script>
+</body>
+</html>

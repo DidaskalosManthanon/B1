@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge General English Test</title>
+    <style>
+        :root {
+            --primary-color: #003a70; /* Cambridge blue */
+            --secondary-color: #a7c6e5;
+            --text-color: #333;
+            --background-color: #f8f9fa;
+            --correct-color: #28a745;
+            --incorrect-color: #dc3545;
+            --hover-color: #0056b3;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            font-weight: normal;
+        }
+        
+        .quiz-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 14px;
+            margin-top: 5px;
+            color: var(--primary-color);
+        }
+        
+        .question-container {
+            margin-bottom: 20px;
+        }
+        
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            list-style-type: none;
+        }
+        
+        .option {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background-color: #f1f8ff;
+            border-color: var(--hover-color);
+        }
+        
+        .option.selected {
+            background-color: var(--secondary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .option.correct {
+            background-color: rgba(40, 167, 69, 0.2);
+            border-color: var(--correct-color);
+        }
+        
+        .option.incorrect {
+            background-color: rgba(220, 53, 69, 0.2);
+            border-color: var(--incorrect-color);
+        }
+        
+        .explanation {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+            display: none; /* Hidden by default */
+        }
+        
+        .explanation h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .explanation p {
+            font-size: 15px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        
+        button:hover {
+            background-color: var(--hover-color);
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #nextBtn {
+            display: none;
+        }
+        
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+        
+        .result-container h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        .level-description {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .level-description h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .restart-btn {
+            margin-top: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            .question {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cambridge General English Test</h1>
+            <p class="subtitle">Test your English level with 20 questions based on the Cambridge format</p>
+        </header>
+        
+        <div class="quiz-container">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="progress-text">Question <span id="current-question">1</span> of 20</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="question">Loading question...</div>
+                <ul class="options" id="options">
+                    <li class="option">Loading options...</li>
+                </ul>
+                
+                <div class="explanation" id="explanation">
+                    <h3>Explanation</h3>
+                    <p id="explanation-text"></p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="checkBtn">Check Answer</button>
+                <button id="nextBtn">Next Question</button>
+            </div>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <h2>Your Test Results</h2>
+            <div class="score">You scored <span id="score">0</span> out of 20</div>
+            
+            <div class="level-description" id="level-description">
+                <h3>Your approximate CEFR level:</h3>
+                <p id="level-text"></p>
+            </div>
+            
+            <button class="restart-btn" id="restart-btn">Take Test Again</button>
+        </div>
+        
+        <footer>
+            <p>Based on the Cambridge General English Test format. This is an unofficial practice test.</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Quiz questions - 20 questions with Cambridge General English format
+        const quizQuestions = [
+            {
+                question: "I _____ to the cinema last night.",
+                options: ["go", "went", "have gone", "am going"],
+                correctAnswer: 1,
+                explanation: "We use the past simple (went) for completed actions in the past at a specific time. 'Last night' indicates a finished time in the past."
+            },
+            {
+                question: "She _____ in London for ten years.",
+                options: ["lives", "is living", "has lived", "lived"],
+                correctAnswer: 2,
+                explanation: "We use the present perfect (has lived) for actions that started in the past and continue until now. The time period 'for ten years' indicates this is still ongoing."
+            },
+            {
+                question: "By the time we arrived, the film _____.",
+                options: ["already started", "has already started", "had already started", "was already starting"],
+                correctAnswer: 2,
+                explanation: "We use the past perfect (had already started) for an action that happened before another action in the past. The film started before we arrived."
+            },
+            {
+                question: "If I _____ rich, I would buy a yacht.",
+                options: ["am", "were", "would be", "had been"],
+                correctAnswer: 1,
+                explanation: "In second conditional sentences (hypothetical present situations), we use 'were' after 'if' for all persons. 'If I were rich' is the correct form for this hypothetical situation."
+            },
+            {
+                question: "I'm really looking forward _____ on holiday next week.",
+                options: ["to go", "going", "to going", "to be going"],
+                correctAnswer: 0,
+                explanation: "After 'looking forward to', we use the -ing form of the verb. 'To' here is a preposition, not part of an infinitive."
+            },
+            {
+                question: "_____ having a degree, he couldn't find a good job.",
+                options: ["Despite", "Although", "Even", "However"],
+                correctAnswer: 0,
+                explanation: "'Despite' (or 'in spite of') is used with a noun, pronoun or gerund to express contrast. It must be followed by a noun phrase, not a clause."
+            },
+            {
+                question: "You _____ better see a doctor if the pain continues.",
+                options: ["would", "should", "had", "were"],
+                correctAnswer: 2,
+                explanation: "'Had better' is an expression used to give strong advice. It suggests that something bad might happen if the advice isn't followed."
+            },
+            {
+                question: "This is the restaurant _____ we had dinner last weekend.",
+                options: ["which", "where", "that", "what"],
+                correctAnswer: 1,
+                explanation: "We use 'where' as a relative pronoun when referring to a place. 'The restaurant' is a place, so 'where' is the appropriate relative pronoun."
+            },
+            {
+                question: "I wish I _____ harder for my exams.",
+                options: ["study", "studied", "had studied", "would study"],
+                correctAnswer: 2,
+                explanation: "When we use 'wish' to express regret about the past, we use the past perfect tense (had + past participle). It refers to something that didn't happen but you wish it had."
+            },
+            {
+                question: "I'd rather you _____ tell anyone about this.",
+                options: ["don't", "didn't", "wouldn't", "won't"],
+                correctAnswer: 1,
+                explanation: "After 'I'd rather you' (expressing preference about someone else's actions), we use the past simple. This is a subjunctive form, not actually referring to past time."
+            },
+            {
+                question: "The film was quite good, but the book was _____.",
+                options: ["far more better", "far better", "more far better", "much more better"],
+                correctAnswer: 1,
+                explanation: "'Far better' is the correct comparative form. 'Far' is used as an intensifier with comparatives. 'More better' is incorrect because 'better' already contains the comparative meaning."
+            },
+            {
+                question: "She suggested _____ for a walk.",
+                options: ["to go", "going", "that we go", "that we went"],
+                correctAnswer: 1,
+                explanation: "After 'suggest', we can use either the -ing form or 'that' + subject + (should +) base verb. 'Going' is the correct -ing form."
+            },
+            {
+                question: "They _____ be at home. I can see the lights are on.",
+                options: ["should", "must", "might", "can"],
+                correctAnswer: 1,
+                explanation: "We use 'must' to express strong logical deduction. The speaker feels certain about the conclusion based on the evidence (the lights are on)."
+            },
+            {
+                question: "It's high time we _____ a decision.",
+                options: ["make", "made", "will make", "should make"],
+                correctAnswer: 1,
+                explanation: "After 'it's high time', we use the past simple tense, not to express past time but to express present or future time with a sense of urgency."
+            },
+            {
+                question: "By this time next year, I _____ from university.",
+                options: ["will graduate", "will be graduating", "will have graduated", "am going to graduate"],
+                correctAnswer: 2,
+                explanation: "We use the future perfect (will have graduated) to talk about an action that will be completed before a specific time in the future. 'By this time next year' indicates a future time."
+            },
+            {
+                question: "_____ the rain, the football match was cancelled.",
+                options: ["Because of", "Although", "Even though", "Despite of"],
+                correctAnswer: 0,
+                explanation: "'Because of' is used to introduce a reason, followed by a noun phrase (not a clause). 'Despite of' is incorrect; the correct form is just 'despite'."
+            },
+            {
+                question: "The new shopping centre, _____ opened last month, has created many jobs.",
+                options: ["that", "which", "it", "what"],
+                correctAnswer: 1,
+                explanation: "We use 'which' as a relative pronoun in non-defining relative clauses (giving extra information set off by commas). 'Which' refers to the shopping centre."
+            },
+            {
+                question: "The meeting had to be _____ because the director was ill.",
+                options: ["called for", "called off", "called out", "called up"],
+                correctAnswer: 1,
+                explanation: "'Called off' is the correct phrasal verb meaning 'cancelled'. The other options have different meanings: 'called for' (demanded), 'called out' (shouted), 'called up' (telephoned or conscripted)."
+            },
+            {
+                question: "I don't think I've met your wife, _____?",
+                options: ["don't I", "have I", "do I", "haven't I"],
+                correctAnswer: 1,
+                explanation: "For question tags, if the main clause is negative, the tag should be positive. Since 'I don't think' makes the statement negative, the tag should be positive with the auxiliary from the main clause ('have')."
+            },
+            {
+                question: "The children _____ to bed by the time we got home.",
+                options: ["went", "had gone", "have gone", "were going"],
+                correctAnswer: 1,
+                explanation: "We use the past perfect (had gone) for an action completed before another past action. The children went to bed before we got home."
+            }
+        ];
+        
+        // Variables to track quiz state
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let answered = false;
+        
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const progressElement = document.getElementById('progress');
+        const currentQuestionElement = document.getElementById('current-question');
+        const checkButton = document.getElementById('checkBtn');
+        const nextButton = document.getElementById('nextBtn');
+        const explanationContainer = document.getElementById('explanation');
+        const explanationText = document.getElementById('explanation-text');
+        const resultContainer = document.getElementById('result-container');
+        const scoreElement = document.getElementById('score');
+        const levelText = document.getElementById('level-text');
+        const restartButton = document.getElementById('restart-btn');
+        
+        // Initialize quiz
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedOption = null;
+            answered = false;
+            
+            resultContainer.style.display = 'none';
+            document.querySelector('.quiz-container').style.display = 'block';
+            
+            loadQuestion();
+            
+            // Event listeners
+            checkButton.addEventListener('click', checkAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+            restartButton.addEventListener('click', restartQuiz);
+        }
+        
+        // Load question
+        function loadQuestion() {
+            // Reset state
+            selectedOption = null;
+            answered = false;
+            checkButton.style.display = 'block';
+            nextButton.style.display = 'none';
+            explanationContainer.style.display = 'none';
+            
+            // Update progress
+            const progressPercentage = (currentQuestion / quizQuestions.length) * 100;
+            progressElement.style.width = `${progressPercentage}%`;
+            currentQuestionElement.textContent = currentQuestion + 1;
+            
+            // Load question and options
+            const currentQ = quizQuestions[currentQuestion];
+            questionElement.textContent = currentQ.question;
+            
+            optionsElement.innerHTML = '';
+            currentQ.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option;
+                li.className = 'option';
+                li.setAttribute('data-index', index);
+                li.addEventListener('click', selectOption);
+                optionsElement.appendChild(li);
+            });
+        }
+        
+        // Select option
+        function selectOption(e) {
+            if (answered) return;
+            
+            // Remove selected class from all options
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            e.target.classList.add('selected');
+            selectedOption = parseInt(e.target.getAttribute('data-index'));
+            
+            // Enable check button
+            checkButton.disabled = false;
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            if (selectedOption === null) {
+                alert('Please select an answer!');
+                return;
+            }
+            
+            answered = true;
+            
+            const correctAnswerIndex = quizQuestions[currentQuestion].correctAnswer;
+            const options = document.querySelectorAll('.option');
+            
+            // Mark selected option as correct or incorrect
+            options.forEach((option, index) => {
+                if (index === correctAnswerIndex) {
+                    option.classList.add('correct');
+                } else if (index === selectedOption) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Show explanation
+            explanationText.textContent = quizQuestions[currentQuestion].explanation;
+            explanationContainer.style.display = 'block';
+            
+            // Update score if correct
+            if (selectedOption === correctAnswerIndex) {
+                score++;
+            }
+            
+            // Hide check button and show next button
+            checkButton.style.display = 'none';
+            nextButton.style.display = 'block';
+        }
+        
+        // Next question
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Show results
+        function showResults() {
+            document.querySelector('.quiz-container').style.display = 'none';
+            resultContainer.style.display = 'block';
+            
+            scoreElement.textContent = score;
+            
+            // Determine approximate CEFR level
+            let level = '';
+            const percentage = (score / quizQuestions.length) * 100;
+            
+            if (percentage >= 90) {
+                level = "C1-C2 (Advanced / Proficient): You have a high level of English proficiency. You can use English effectively in most academic and professional situations, and understand complex texts.";
+            } else if (percentage >= 75) {
+                level = "B2 (Upper Intermediate): You can interact with native speakers without strain. You can produce clear, detailed text on a wide range of subjects and explain your viewpoint on a topical issue.";
+            } else if (percentage >= 60) {
+                level = "B1 (Intermediate): You can deal with most situations likely to arise while traveling. You can describe experiences, events, dreams, and ambitions and briefly give reasons and explanations for opinions and plans.";
+            } else if (percentage >= 40) {
+                level = "A2 (Elementary): You can communicate in simple and routine tasks requiring a simple and direct exchange of information. You can describe in simple terms aspects of your background and immediate environment.";
+            } else {
+                level = "A1 (Beginner): You can understand and use familiar everyday expressions and very basic phrases. You can introduce yourself and others and can ask and answer questions about personal details.";
+            }
+            
+            levelText.textContent = level;
+        }
+        
+        // Restart quiz
+        function restartQuiz() {
+            initQuiz();
+        }
+        
+        // Start the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
